@@ -6,6 +6,7 @@ import com.thoughtworks.rslist.dto.RsEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +45,17 @@ public class RsController {
         ObjectMapper objectMapper = new ObjectMapper();
         RsEvent rsEvent = objectMapper.readValue(rsEventString, RsEvent.class);
         rsList.add(rsEvent);
+    }
+
+    @PutMapping("rs/modify/{index}")
+    public void modifyRsEvent(@PathVariable int index,
+                              @RequestBody RsEvent rsEvent) {
+        if (rsEvent.getEventName().equals("")) {
+            rsEvent.setEventName(rsList.get(index - 1).getKeywords());
+        }
+        if (rsEvent.getKeywords().equals("")) {
+            rsEvent.setKeywords(rsList.get(index - 1).getKeywords());
+        }
+        rsList.set(index - 1, rsEvent);
     }
 }
