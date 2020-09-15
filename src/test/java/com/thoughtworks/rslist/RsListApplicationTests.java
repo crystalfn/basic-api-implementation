@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -127,5 +128,29 @@ class RsListApplicationTests {
             .andExpect(jsonPath("$", hasSize(3)))
             .andExpect(jsonPath("$[0].eventName", is("这是一条被修改的事件")))
             .andExpect(jsonPath("$[0].keywords", is("无分类")));
+    }
+
+    @Test
+    void should_delete_rs_event() throws Exception {
+        mockMvc.perform(get("/rs/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(3)))
+            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+            .andExpect(jsonPath("$[0].keywords", is("无分类")))
+            .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+            .andExpect(jsonPath("$[1].keywords", is("无分类")))
+            .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
+            .andExpect(jsonPath("$[2].keywords", is("无分类")));
+
+        mockMvc.perform(delete("/rs/delete/2"))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+            .andExpect(jsonPath("$[0].keywords", is("无分类")))
+            .andExpect(jsonPath("$[1].eventName", is("第三条事件")))
+            .andExpect(jsonPath("$[1].keywords", is("无分类")));
     }
 }

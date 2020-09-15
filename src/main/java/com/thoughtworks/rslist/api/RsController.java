@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.RsEvent;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,5 +58,10 @@ public class RsController {
             rsEvent.setKeywords(rsList.get(index - 1).getKeywords());
         }
         rsList.set(index - 1, rsEvent);
+    }
+
+    @DeleteMapping("rs/delete/{index}")
+    public void deleteRsEvent(@PathVariable int index) {
+        rsList.remove(index - 1);
     }
 }
