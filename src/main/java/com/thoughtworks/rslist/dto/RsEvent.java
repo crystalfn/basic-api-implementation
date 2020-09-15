@@ -4,6 +4,8 @@ public class RsEvent {
     private String eventName;
     private String keywords;
 
+    public RsEvent() {}
+
     public RsEvent(String eventName, String keywords) {
         this.eventName = eventName;
         this.keywords = keywords;

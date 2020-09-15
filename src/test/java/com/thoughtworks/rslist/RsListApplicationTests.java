@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -103,4 +104,9 @@ class RsListApplicationTests {
             .andExpect(jsonPath("$[3].eventName", is("第四条事件")))
             .andExpect(jsonPath("$[3].keywords", is("无分类")));
     }
+
+//    @Test
+//    void should_modify_rs_event_message() {
+//        mockMvc.perform(put())
+//    }
 }
