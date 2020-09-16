@@ -20,12 +20,12 @@ public class RsEvent {
         this.keywords = keywords;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
     public UserDto getUser() {
         return user;
     }
 
-    @JsonProperty
+//    @JsonProperty
     public void setUser() {
         this.user = user;
     }

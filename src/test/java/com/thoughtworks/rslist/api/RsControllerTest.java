@@ -30,27 +30,42 @@ class RsControllerTest {
 
     @Test
     void should_get_one_rs_event() throws Exception {
+//        mockMvc.perform(get("/rs/1"))
+//            .andExpect(status().isOk())
+//            .andExpect(jsonPath("$.eventName", is("第一条事件")))
+//            .andExpect(jsonPath("$.keywords", is("无分类")))
+//            .andExpect(jsonPath("$.user").doesNotExist());
+
         mockMvc.perform(get("/rs/1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.eventName", is("第一条事件")))
-            .andExpect(jsonPath("$.keywords", is("无分类")))
-            .andExpect(jsonPath("$.user").doesNotExist());
+            .andExpect(jsonPath("$.keywords", is("无分类")));
     }
 
     @Test
     void should_get_rs_event_by_range() throws Exception {
+//        mockMvc.perform(get("/rs/list?start=1&end=3"))
+//            .andExpect(status().isOk())
+//            .andExpect(jsonPath("$", hasSize(3)))
+//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+//            .andExpect(jsonPath("$[0].keywords", is("无分类")))
+//            .andExpect(jsonPath("$[0].user").doesNotExist())
+//            .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+//            .andExpect(jsonPath("$[1].keywords", is("无分类")))
+//            .andExpect(jsonPath("$[1].user").doesNotExist())
+//            .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
+//            .andExpect(jsonPath("$[2].keywords", is("无分类")))
+//            .andExpect(jsonPath("$[2].user").doesNotExist());
+
         mockMvc.perform(get("/rs/list?start=1&end=3"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(3)))
             .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
             .andExpect(jsonPath("$[0].keywords", is("无分类")))
-            .andExpect(jsonPath("$[0].user").doesNotExist())
             .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
             .andExpect(jsonPath("$[1].keywords", is("无分类")))
-            .andExpect(jsonPath("$[1].user").doesNotExist())
             .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-            .andExpect(jsonPath("$[2].keywords", is("无分类")))
-            .andExpect(jsonPath("$[2].user").doesNotExist());
+            .andExpect(jsonPath("$[2].keywords", is("无分类")));
     }
 
     @Test
@@ -81,11 +96,11 @@ class RsControllerTest {
         mockMvc.perform(get("/user/list"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].userName", is("张三")))
-            .andExpect(jsonPath("$[0].age", is(20)))
-            .andExpect(jsonPath("$[0].gender", is("male")))
-            .andExpect(jsonPath("$[0].email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[0].phone", is("13155555555")));
+            .andExpect(jsonPath("$[0].user_name", is("张三")))
+            .andExpect(jsonPath("$[0].user_age", is(20)))
+            .andExpect(jsonPath("$[0].user_gender", is("male")))
+            .andExpect(jsonPath("$[0].user_email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[0].user_phone", is("13155555555")));
 
         UserDto userDto = new UserDto("张三", 20, "male", "zhangSan@qq.com", "13155555555");
         RsEvent addRsEvent = new RsEvent("第四条事件", "无分类", userDto);
@@ -109,20 +124,20 @@ class RsControllerTest {
             .andExpect(jsonPath("$[2].keywords", is("无分类")))
             .andExpect(jsonPath("$[3].eventName", is("第四条事件")))
             .andExpect(jsonPath("$[3].keywords", is("无分类")))
-            .andExpect(jsonPath("$[3].user.userName", is("张三")))
-            .andExpect(jsonPath("$[3].user.age", is(20)))
-            .andExpect(jsonPath("$[3].user.gender", is("male")))
-            .andExpect(jsonPath("$[3].user.email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[3].user.phone", is("13155555555")));
+            .andExpect(jsonPath("$[3].user.user_name", is("张三")))
+            .andExpect(jsonPath("$[3].user.user_age", is(20)))
+            .andExpect(jsonPath("$[3].user.user_gender", is("male")))
+            .andExpect(jsonPath("$[3].user.user_email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[3].user.user_phone", is("13155555555")));
 
         mockMvc.perform(get("/user/list"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].userName", is("张三")))
-            .andExpect(jsonPath("$[0].age", is(20)))
-            .andExpect(jsonPath("$[0].gender", is("male")))
-            .andExpect(jsonPath("$[0].email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[0].phone", is("13155555555")));
+            .andExpect(jsonPath("$[0].user_name", is("张三")))
+            .andExpect(jsonPath("$[0].user_age", is(20)))
+            .andExpect(jsonPath("$[0].user_gender", is("male")))
+            .andExpect(jsonPath("$[0].user_email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[0].user_phone", is("13155555555")));
     }
 
     @Test
@@ -140,11 +155,11 @@ class RsControllerTest {
         mockMvc.perform(get("/user/list"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].userName", is("张三")))
-            .andExpect(jsonPath("$[0].age", is(20)))
-            .andExpect(jsonPath("$[0].gender", is("male")))
-            .andExpect(jsonPath("$[0].email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[0].phone", is("13155555555")));
+            .andExpect(jsonPath("$[0].user_name", is("张三")))
+            .andExpect(jsonPath("$[0].user_age", is(20)))
+            .andExpect(jsonPath("$[0].user_gender", is("male")))
+            .andExpect(jsonPath("$[0].user_email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[0].user_phone", is("13155555555")));
 
         UserDto userDto = new UserDto("李四", 20, "male", "zhangSan@qq.com", "13155555555");
         RsEvent addRsEvent = new RsEvent("第四条事件", "无分类", userDto);
@@ -168,25 +183,25 @@ class RsControllerTest {
             .andExpect(jsonPath("$[2].keywords", is("无分类")))
             .andExpect(jsonPath("$[3].eventName", is("第四条事件")))
             .andExpect(jsonPath("$[3].keywords", is("无分类")))
-            .andExpect(jsonPath("$[3].user.userName", is("李四")))
-            .andExpect(jsonPath("$[3].user.age", is(20)))
-            .andExpect(jsonPath("$[3].user.gender", is("male")))
-            .andExpect(jsonPath("$[3].user.email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[3].user.phone", is("13155555555")));
+            .andExpect(jsonPath("$[3].user.user_name", is("李四")))
+            .andExpect(jsonPath("$[3].user.user_age", is(20)))
+            .andExpect(jsonPath("$[3].user.user_gender", is("male")))
+            .andExpect(jsonPath("$[3].user.user_email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[3].user.user_phone", is("13155555555")));
 
         mockMvc.perform(get("/user/list"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].userName", is("张三")))
-            .andExpect(jsonPath("$[0].age", is(20)))
-            .andExpect(jsonPath("$[0].gender", is("male")))
-            .andExpect(jsonPath("$[0].email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[0].phone", is("13155555555")))
-            .andExpect(jsonPath("$[1].userName", is("李四")))
-            .andExpect(jsonPath("$[1].age", is(20)))
-            .andExpect(jsonPath("$[1].gender", is("male")))
-            .andExpect(jsonPath("$[1].email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[1].phone", is("13155555555")));
+            .andExpect(jsonPath("$[0].user_name", is("张三")))
+            .andExpect(jsonPath("$[0].user_age", is(20)))
+            .andExpect(jsonPath("$[0].user_gender", is("male")))
+            .andExpect(jsonPath("$[0].user_email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[0].user_phone", is("13155555555")))
+            .andExpect(jsonPath("$[1].user_name", is("李四")))
+            .andExpect(jsonPath("$[1].user_age", is(20)))
+            .andExpect(jsonPath("$[1].user_gender", is("male")))
+            .andExpect(jsonPath("$[1].user_email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[1].user_phone", is("13155555555")));
     }
 
     @Test
