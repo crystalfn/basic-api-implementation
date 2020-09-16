@@ -1,33 +1,29 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class UserController {
 
-    public static List<UserDto> userDtoList = initUserDtiList();
-
-    private static List<UserDto> initUserDtiList() {
-        List<UserDto> tempList = new ArrayList<>();
-        tempList.add(new UserDto("张三", 20, "male", "zhangSan@qq.com", "13155555555"));
-        return tempList;
-    }
+    @Autowired
+    UserService userService;
 
     @PostMapping("/user/register")
-    public static void register(@Valid @RequestBody UserDto userDto) {
-        userDtoList.add(userDto);
+    public void register(@Valid @RequestBody UserDto userDto) {
+        userService.register(userDto);
     }
 
     @GetMapping("/user/list")
     public List<UserDto> getAllUser() {
-        return userDtoList;
+        return userService.getUserDtoList();
     }
 }

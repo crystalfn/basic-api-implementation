@@ -1,9 +1,9 @@
 package com.thoughtworks.rslist.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,13 +18,18 @@ import java.util.List;
 
 @RestController
 public class RsController {
+
+    @Autowired
+    UserService userService;
+
     private List<RsEvent> rsList = initRsList();
 
     private List<RsEvent> initRsList() {
         List<RsEvent> tempList = new ArrayList<>();
-        tempList.add(new RsEvent("第一条事件", "无分类"));
-        tempList.add(new RsEvent("第二条事件", "无分类"));
-        tempList.add(new RsEvent("第三条事件", "无分类"));
+        UserDto userDto = new UserDto("张三", 20, "male", "zhangSan@qq.com", "13155555555");
+        tempList.add(new RsEvent("第一条事件", "无分类", userDto));
+        tempList.add(new RsEvent("第二条事件", "无分类", userDto));
+        tempList.add(new RsEvent("第三条事件", "无分类", userDto));
         return tempList;
     }
 
@@ -46,13 +51,13 @@ public class RsController {
     public void addRsEvent(@RequestBody RsEvent rsEvent) {
         rsList.add(rsEvent);
 
-        for (UserDto userDto : UserController.userDtoList) {
+        for (UserDto userDto : userService.getUserDtoList()) {
             if (rsEvent.getUser().getUserName().equals(userDto.getUserName())) {
                 return;
             }
         }
 
-        UserController.register(rsEvent.getUser());
+        userService.register(rsEvent.getUser());
     }
 
     @PutMapping("rs/modify/{index}")
