@@ -27,6 +27,7 @@ public class UserDto {
     @NotEmpty
     private String gender;
 
+    @NotEmpty
     private String email;
     private String phone;
 }
