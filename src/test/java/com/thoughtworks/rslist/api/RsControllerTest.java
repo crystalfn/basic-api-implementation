@@ -33,18 +33,8 @@ class RsControllerTest {
         mockMvc.perform(get("/rs/1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.eventName", is("第一条事件")))
-            .andExpect(jsonPath("$.keywords", is("无分类")));
-
-
-        mockMvc.perform(get("/rs/2"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.eventName", is("第二条事件")))
-            .andExpect(jsonPath("$.keywords", is("无分类")));
-
-        mockMvc.perform(get("/rs/3"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.eventName", is("第三条事件")))
-            .andExpect(jsonPath("$.keywords", is("无分类")));
+            .andExpect(jsonPath("$.keywords", is("无分类")))
+            .andExpect(jsonPath("$.user").doesNotExist());
     }
 
     @Test
@@ -54,10 +44,13 @@ class RsControllerTest {
             .andExpect(jsonPath("$", hasSize(3)))
             .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
             .andExpect(jsonPath("$[0].keywords", is("无分类")))
+            .andExpect(jsonPath("$[0].user").doesNotExist())
             .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
             .andExpect(jsonPath("$[1].keywords", is("无分类")))
+            .andExpect(jsonPath("$[1].user").doesNotExist())
             .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-            .andExpect(jsonPath("$[2].keywords", is("无分类")));
+            .andExpect(jsonPath("$[2].keywords", is("无分类")))
+            .andExpect(jsonPath("$[2].user").doesNotExist());
     }
 
     @Test
