@@ -78,4 +78,16 @@ class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void age_should_not_less_than_18() throws Exception {
+        UserDto userDto = new UserDto("crystal", 17, "female", "crystal@qq.com", "13177777777");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userDtoJson = objectMapper.writeValueAsString(userDto);
+
+        mockMvc.perform(post("/user/register")
+            .content(userDtoJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+    }
 }
