@@ -1,29 +1,19 @@
 package com.thoughtworks.rslist.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RsEvent {
     private String eventName;
     private String keywords;
-
-    public RsEvent() {}
+    private UserDto user;
 
     public RsEvent(String eventName, String keywords) {
         this.eventName = eventName;
-        this.keywords = keywords;
-    }
-
-    public String getEventName() {
-        return eventName;
-    }
-
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
-
-    public String getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
 }
