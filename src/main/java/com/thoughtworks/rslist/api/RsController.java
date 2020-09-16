@@ -63,7 +63,7 @@ public class RsController {
     }
 
     @PutMapping("rs/modify/{index}")
-    public void modifyRsEvent(@PathVariable int index,
+    public ResponseEntity modifyRsEvent(@PathVariable int index,
                               @RequestBody RsEvent rsEvent) {
         RsEvent modifyRsEvent = rsList.get(index - 1);
         if (rsEvent.getEventName() != null) {
@@ -72,6 +72,7 @@ public class RsController {
         if (rsEvent.getKeywords() != null) {
             modifyRsEvent.setKeywords(rsEvent.getKeywords());
         }
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("rs/delete/{index}")
