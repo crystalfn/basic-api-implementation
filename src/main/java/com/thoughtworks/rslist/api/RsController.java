@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.RsEvent;
+import com.thoughtworks.rslist.dto.UserDto;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +35,7 @@ public class RsController {
 
     @GetMapping("rs/list")
     public List<RsEvent> getRsEventByRange(@RequestParam(required = false) Integer start,
-                                    @RequestParam(required = false) Integer end) {
+                                           @RequestParam(required = false) Integer end) {
         if (start == null || end == null) {
             return rsList;
         }
@@ -42,10 +43,16 @@ public class RsController {
     }
 
     @PostMapping("rs/event")
-    public void addRsEvent(@RequestBody String rsEventString) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        RsEvent rsEvent = objectMapper.readValue(rsEventString, RsEvent.class);
+    public void addRsEvent(@RequestBody RsEvent rsEvent) {
         rsList.add(rsEvent);
+
+        for (UserDto userDto : UserController.userDtoList) {
+            if (rsEvent.getUser().getUserName().equals(userDto.getUserName())) {
+                return;
+            }
+        }
+
+        UserController.register(rsEvent.getUser());
     }
 
     @PutMapping("rs/modify/{index}")

@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.RsEvent;
+import com.thoughtworks.rslist.dto.UserDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -72,7 +73,7 @@ class RsControllerTest {
     }
 
     @Test
-    void should_add_one_rs_event() throws Exception {
+    void should_add_one_rs_event_when_user_exit() throws Exception {
         mockMvc.perform(get("/rs/list"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(3)))
@@ -83,7 +84,17 @@ class RsControllerTest {
             .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
             .andExpect(jsonPath("$[2].keywords", is("无分类")));
 
-        RsEvent addRsEvent = new RsEvent("第四条事件", "无分类");
+        mockMvc.perform(get("/user/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].userName", is("张三")))
+            .andExpect(jsonPath("$[0].age", is(20)))
+            .andExpect(jsonPath("$[0].gender", is("male")))
+            .andExpect(jsonPath("$[0].email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[0].phone", is("13155555555")));
+
+        UserDto userDto = new UserDto("张三", 20, "male", "zhangSan@qq.com", "13155555555");
+        RsEvent addRsEvent = new RsEvent("第四条事件", "无分类", userDto);
         ObjectMapper objectMapper = new ObjectMapper();
         final String addRsEventJson = objectMapper.writeValueAsString(addRsEvent);
 
@@ -102,7 +113,21 @@ class RsControllerTest {
             .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
             .andExpect(jsonPath("$[2].keywords", is("无分类")))
             .andExpect(jsonPath("$[3].eventName", is("第四条事件")))
-            .andExpect(jsonPath("$[3].keywords", is("无分类")));
+            .andExpect(jsonPath("$[3].keywords", is("无分类")))
+            .andExpect(jsonPath("$[3].user.userName", is("张三")))
+            .andExpect(jsonPath("$[3].user.age", is(20)))
+            .andExpect(jsonPath("$[3].user.gender", is("male")))
+            .andExpect(jsonPath("$[3].user.email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[3].user.phone", is("13155555555")));
+
+        mockMvc.perform(get("/user/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].userName", is("张三")))
+            .andExpect(jsonPath("$[0].age", is(20)))
+            .andExpect(jsonPath("$[0].gender", is("male")))
+            .andExpect(jsonPath("$[0].email", is("zhangSan@qq.com")))
+            .andExpect(jsonPath("$[0].phone", is("13155555555")));
     }
 
     @Test

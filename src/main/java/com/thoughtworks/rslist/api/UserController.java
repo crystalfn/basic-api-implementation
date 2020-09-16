@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.UserDto;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,10 +13,21 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    private List<UserDto> userDtoList = new ArrayList<>();
+    public static List<UserDto> userDtoList = initUserDtiList();
+
+    private static List<UserDto> initUserDtiList() {
+        List<UserDto> tempList = new ArrayList<>();
+        tempList.add(new UserDto("张三", 20, "male", "zhangSan@qq.com", "13155555555"));
+        return tempList;
+    }
 
     @PostMapping("/user/register")
-    public void register(@Valid @RequestBody UserDto userDto) {
+    public static void register(@Valid @RequestBody UserDto userDto) {
         userDtoList.add(userDto);
+    }
+
+    @GetMapping("/user/list")
+    public List<UserDto> getAllUser() {
+        return userDtoList;
     }
 }
