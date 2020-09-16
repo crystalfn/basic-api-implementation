@@ -17,7 +17,10 @@ public class UserDto {
     private String userName;
 
     private Integer age;
+
+    @NotEmpty
     private String gender;
+
     private String email;
     private String phone;
 }
