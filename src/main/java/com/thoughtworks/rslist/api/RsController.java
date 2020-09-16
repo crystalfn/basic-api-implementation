@@ -54,12 +54,18 @@ public class RsController {
 
         for (UserDto userDto : userService.getUserDtoList()) {
             if (rsEvent.getUser().getUserName().equals(userDto.getUserName())) {
-                return ResponseEntity.ok().build();
+                return ResponseEntity
+                    .created(null)
+                    .header("index", String.valueOf(rsList.size()))
+                    .build();
             }
         }
 
         userService.register(rsEvent.getUser());
-        return ResponseEntity.ok().build();
+        return ResponseEntity
+            .created(null)
+            .header("index", String.valueOf(rsList.size()))
+            .build();
     }
 
     @PutMapping("rs/modify/{index}")

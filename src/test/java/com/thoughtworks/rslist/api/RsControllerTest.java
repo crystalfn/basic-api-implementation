@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -101,7 +102,8 @@ class RsControllerTest {
         mockMvc.perform(post("/rs/event")
             .content(addRsEventJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated())
+            .andExpect(header().string("index", String.valueOf(4)));
 
         mockMvc.perform(get("/rs/list"))
             .andExpect(status().isOk())
@@ -159,7 +161,8 @@ class RsControllerTest {
         mockMvc.perform(post("/rs/event")
             .content(addRsEventJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated())
+            .andExpect(header().string("index", String.valueOf(4)));
 
         mockMvc.perform(get("/rs/list"))
             .andExpect(status().isOk())
