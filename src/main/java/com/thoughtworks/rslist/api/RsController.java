@@ -51,13 +51,13 @@ public class RsController {
     @PutMapping("rs/modify/{index}")
     public void modifyRsEvent(@PathVariable int index,
                               @RequestBody RsEvent rsEvent) {
-        if (rsEvent.getEventName().equals("")) {
-            rsEvent.setEventName(rsList.get(index - 1).getKeywords());
+        RsEvent modifyRsEvent = rsList.get(index - 1);
+        if (rsEvent.getEventName() != null) {
+            modifyRsEvent.setEventName(rsEvent.getEventName());
         }
-        if (rsEvent.getKeywords().equals("")) {
-            rsEvent.setKeywords(rsList.get(index - 1).getKeywords());
+        if (rsEvent.getKeywords() != null) {
+            modifyRsEvent.setKeywords(rsEvent.getKeywords());
         }
-        rsList.set(index - 1, rsEvent);
     }
 
     @DeleteMapping("rs/delete/{index}")
