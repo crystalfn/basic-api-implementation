@@ -21,7 +21,10 @@ public class UserController {
     @PostMapping("/user/register")
     public ResponseEntity register(@Valid @RequestBody UserDto userDto) {
         userService.register(userDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity
+            .created(null)
+            .header("index", String.valueOf(userService.getUserDtoList().size()))
+            .build();
     }
 
     @GetMapping("/user/list")
