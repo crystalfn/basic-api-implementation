@@ -76,7 +76,8 @@ public class RsController {
     }
 
     @DeleteMapping("rs/delete/{index}")
-    public void deleteRsEvent(@PathVariable int index) {
+    public ResponseEntity deleteRsEvent(@PathVariable int index) {
         rsList.remove(index - 1);
+        return ResponseEntity.ok().build();
     }
 }
