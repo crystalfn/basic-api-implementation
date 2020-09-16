@@ -49,16 +49,17 @@ public class RsController {
     }
 
     @PostMapping("rs/event")
-    public void addRsEvent(@RequestBody RsEvent rsEvent) {
+    public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
         rsList.add(rsEvent);
 
         for (UserDto userDto : userService.getUserDtoList()) {
             if (rsEvent.getUser().getUserName().equals(userDto.getUserName())) {
-                return;
+                return ResponseEntity.ok().build();
             }
         }
 
         userService.register(rsEvent.getUser());
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("rs/modify/{index}")
