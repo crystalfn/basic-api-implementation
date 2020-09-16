@@ -40,12 +40,12 @@ public class RsController {
     }
 
     @GetMapping("rs/list")
-    public List<RsEvent> getRsEventByRange(@RequestParam(required = false) Integer start,
+    public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
                                            @RequestParam(required = false) Integer end) {
         if (start == null || end == null) {
-            return rsList;
+            return ResponseEntity.ok(rsList);
         }
-        return rsList.subList(start - 1, end);
+        return ResponseEntity.ok(rsList.subList(start - 1, end));
     }
 
     @PostMapping("rs/event")
