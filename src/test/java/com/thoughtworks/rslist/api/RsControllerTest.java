@@ -130,6 +130,30 @@ class RsControllerTest {
     }
 
     @Test
+    void should_modify_rs_event_message_when_eventName_is_null() throws Exception {
+        mockMvc.perform(get("/rs/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(3)))
+            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+            .andExpect(jsonPath("$[0].keywords", is("无分类")));
+
+        RsEvent rsEvent = new RsEvent(null, "被修改的分类");
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String modifyRsEvent = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(put("/rs/modify/1")
+            .content(modifyRsEvent)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(3)))
+            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+            .andExpect(jsonPath("$[0].keywords", is("被修改的分类")));
+    }
+
+    @Test
     void should_delete_rs_event() throws Exception {
         mockMvc.perform(get("/rs/list"))
             .andExpect(status().isOk())
