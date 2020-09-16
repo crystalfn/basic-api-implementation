@@ -1,5 +1,19 @@
 ### 作业要求
 
+切换到课程对应的分支查看每节课的作业要求
+* Routing: routing
+* Data Binding: data-binding
+* Validation: validation
+* Customised Response: customize-response
+* Error Handling: error-handling
+
+注意：最终需要将改动合并到master分支
+
+重复完成课堂上的Demo:
+
+* 实现获取热搜事件列表的接口
+* 注意先写测试
+
 根据课堂上的demo，完成下面需求
 1. 提供获取某一条热搜事件的接口
 2. 提供能够根据起始参数，获取对应范围内的热搜事件列表的接口
