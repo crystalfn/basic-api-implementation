@@ -7,6 +7,7 @@ import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,5 +51,10 @@ public class UserController {
     @GetMapping("/user/list")
     public ResponseEntity<List<UserDto>> getAllUser() {
         return ResponseEntity.ok(userService.getUserDtoList());
+    }
+
+    @GetMapping("/user/{id}")
+    public UserEntity getUserById(@PathVariable int id) {
+        return userRepository.findById(id).get();
     }
 }

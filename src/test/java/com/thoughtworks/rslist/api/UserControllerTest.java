@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,9 +15,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -29,6 +33,11 @@ class UserControllerTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @BeforeEach
+    public void resetUserRepository() {
+        userRepository.deleteAll();
+    }
 
     @Test
     void should_register_user() throws Exception {
@@ -177,5 +186,23 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void get_user_by_user_id() throws Exception {
+        UserEntity userEntity = UserEntity.builder()
+            .userName("王五")
+            .age(22)
+            .gender("male")
+            .email("five@qq.com")
+            .phone("13011111111")
+            .build();
+        userRepository.save(userEntity);
+
+        mockMvc.perform(get("/user/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(1)))
+            .andExpect(jsonPath("$.userName", is("王五")))
+            .andExpect(jsonPath("$.age", is(22)));
     }
 }
