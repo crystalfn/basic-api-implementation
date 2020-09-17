@@ -111,72 +111,16 @@ class RsControllerTest {
     }
 
     @Test
-    void should_add_one_rs_event_when_user_not_exit() throws Exception {
-        UserEntity userEntity = UserEntity.builder()
-            .userName("王五")
-            .age(22)
-            .gender("male")
-            .email("five@qq.com")
-            .phone("13011111111")
-            .build();
-
-        mockMvc.perform(get("/rs/list"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(3)))
-            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-            .andExpect(jsonPath("$[0].keywords", is("无分类")))
-            .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-            .andExpect(jsonPath("$[1].keywords", is("无分类")))
-            .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-            .andExpect(jsonPath("$[2].keywords", is("无分类")));
-
-        mockMvc.perform(get("/user/list"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].user_name", is("张三")))
-            .andExpect(jsonPath("$[0].user_age", is(20)))
-            .andExpect(jsonPath("$[0].user_gender", is("male")))
-            .andExpect(jsonPath("$[0].user_email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[0].user_phone", is("13155555555")));
-
-        String jsonValue = "{\"eventName\":\"新事件\",\"keyword\":\"经济\",\"userId\": " + userEntity.getId() + "}";
+    void should_not_add_one_rs_event_when_user_not_exit() throws Exception {
+        String jsonValue = "{\"eventName\":\"新事件\",\"keyword\":\"经济\",\"userId\": 1}";
 
         mockMvc.perform(post("/rs/addEvent")
             .content(jsonValue)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isCreated())
-            .andExpect(header().string("index", String.valueOf(4)));
+            .andExpect(status().isBadRequest());
 
-        mockMvc.perform(get("/rs/event"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(4)))
-            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-            .andExpect(jsonPath("$[0].keywords", is("无分类")))
-            .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-            .andExpect(jsonPath("$[1].keywords", is("无分类")))
-            .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-            .andExpect(jsonPath("$[2].keywords", is("无分类")))
-            .andExpect(jsonPath("$[3].eventName", is("第四条事件")))
-            .andExpect(jsonPath("$[3].keywords", is("无分类")))
-            .andExpect(jsonPath("$[3].user.user_name", is("李四")))
-            .andExpect(jsonPath("$[3].user.user_age", is(20)))
-            .andExpect(jsonPath("$[3].user.user_gender", is("male")))
-            .andExpect(jsonPath("$[3].user.user_email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[3].user.user_phone", is("13155555555")));
-
-        mockMvc.perform(get("/user/list"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].user_name", is("张三")))
-            .andExpect(jsonPath("$[0].user_age", is(20)))
-            .andExpect(jsonPath("$[0].user_gender", is("male")))
-            .andExpect(jsonPath("$[0].user_email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[0].user_phone", is("13155555555")))
-            .andExpect(jsonPath("$[1].user_name", is("李四")))
-            .andExpect(jsonPath("$[1].user_age", is(20)))
-            .andExpect(jsonPath("$[1].user_gender", is("male")))
-            .andExpect(jsonPath("$[1].user_email", is("zhangSan@qq.com")))
-            .andExpect(jsonPath("$[1].user_phone", is("13155555555")));
+        final List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        assertEquals(0, rsEvents.size());
     }
 
     @Test
