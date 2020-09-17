@@ -3,6 +3,9 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.entity.RsEventEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,20 +25,28 @@ import java.util.List;
 public class RsController {
 
     final
+    UserRepository userRepository;
+
+    final
+    RsEventRepository rsEventRepository;
+
+    final
     UserService userService;
 
     private final List<RsEvent> rsList = initRsList();
 
-    public RsController(UserService userService) {
+    public RsController(UserService userService, UserRepository userRepository, RsEventRepository rsEventRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.rsEventRepository = rsEventRepository;
     }
 
     private List<RsEvent> initRsList() {
         List<RsEvent> tempList = new ArrayList<>();
-        UserDto userDto = new UserDto("张三", 20, "male", "zhangSan@qq.com", "13155555555");
-        tempList.add(new RsEvent("第一条事件", "无分类", userDto));
-        tempList.add(new RsEvent("第二条事件", "无分类", userDto));
-        tempList.add(new RsEvent("第三条事件", "无分类", userDto));
+//        UserDto userDto = new UserDto("张三", 20, "male", "zhangSan@qq.com", "13155555555");
+//        tempList.add(new RsEvent("第一条事件", "无分类", userDto));
+//        tempList.add(new RsEvent("第二条事件", "无分类", userDto));
+//        tempList.add(new RsEvent("第三条事件", "无分类", userDto));
         return tempList;
     }
 
@@ -62,22 +73,13 @@ public class RsController {
 
     @PostMapping("rs/addEvent")
     public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
-        rsList.add(rsEvent);
-
-        for (UserDto userDto : userService.getUserDtoList()) {
-            if (rsEvent.getUser().getUserName().equals(userDto.getUserName())) {
-                return ResponseEntity
-                    .created(null)
-                    .header("index", String.valueOf(rsList.size()))
-                    .build();
-            }
-        }
-
-        userService.register(rsEvent.getUser());
-        return ResponseEntity
-            .created(null)
-            .header("index", String.valueOf(rsList.size()))
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+            .eventName(rsEvent.getEventName())
+            .keywords(rsEvent.getKeywords())
+            .userId(rsEvent.getUserId())
             .build();
+        rsEventRepository.save(rsEventEntity);
+        return ResponseEntity.created(null).build();
     }
 
     @PutMapping("rs/modify/{index}")

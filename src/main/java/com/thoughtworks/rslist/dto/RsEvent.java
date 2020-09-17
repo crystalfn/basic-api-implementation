@@ -31,4 +31,8 @@ public class RsEvent {
         this.eventName = eventName;
         this.keywords = keywords;
     }
+
+    @Valid
+    @JsonView(WithUser.class)
+    private int userId;
 }
