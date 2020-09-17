@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.service.UserService;
@@ -20,10 +21,14 @@ import java.util.List;
 @RestController
 public class RsController {
 
-    @Autowired
+    final
     UserService userService;
 
-    private List<RsEvent> rsList = initRsList();
+    private final List<RsEvent> rsList = initRsList();
+
+    public RsController(UserService userService) {
+        this.userService = userService;
+    }
 
     private List<RsEvent> initRsList() {
         List<RsEvent> tempList = new ArrayList<>();
@@ -34,21 +39,28 @@ public class RsController {
         return tempList;
     }
 
+    @JsonView(RsEvent.WithoutUser.class)
     @GetMapping("/rs/{index}")
     public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int index) {
         return ResponseEntity.ok(rsList.get(index - 1));
     }
 
+    @JsonView(RsEvent.WithoutUser.class)
     @GetMapping("rs/list")
+    public ResponseEntity<List<RsEvent>> getAllEvents() {
+        return ResponseEntity.ok(rsList);
+    }
+
+    @GetMapping("rs/event")
     public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
-                                           @RequestParam(required = false) Integer end) {
+                                                           @RequestParam(required = false) Integer end) {
         if (start == null || end == null) {
             return ResponseEntity.ok(rsList);
         }
         return ResponseEntity.ok(rsList.subList(start - 1, end));
     }
 
-    @PostMapping("rs/event")
+    @PostMapping("rs/addEvent")
     public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
         rsList.add(rsEvent);
 
@@ -70,7 +82,7 @@ public class RsController {
 
     @PutMapping("rs/modify/{index}")
     public ResponseEntity modifyRsEvent(@PathVariable int index,
-                              @RequestBody RsEvent rsEvent) {
+                                        @RequestBody RsEvent rsEvent) {
         RsEvent modifyRsEvent = rsList.get(index - 1);
         if (rsEvent.getEventName() != null) {
             modifyRsEvent.setEventName(rsEvent.getEventName());
