@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -204,5 +205,38 @@ class UserControllerTest {
             .andExpect(jsonPath("$.id", is(1)))
             .andExpect(jsonPath("$.userName", is("王五")))
             .andExpect(jsonPath("$.age", is(22)));
+    }
+
+    @Test
+    void delete_user_by_user_id() throws Exception {
+        UserEntity userEntityFirst = UserEntity.builder()
+            .userName("王五")
+            .age(22)
+            .gender("male")
+            .email("five@qq.com")
+            .phone("13011111111")
+            .build();
+        userRepository.save(userEntityFirst);
+
+        UserEntity userEntitySecond = UserEntity.builder()
+            .userName("刘六")
+            .age(22)
+            .gender("male")
+            .email("five@qq.com")
+            .phone("13011111111")
+            .build();
+        userRepository.save(userEntitySecond);
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(2, userEntityList.size());
+        assertEquals("王五", userEntityList.get(0).getUserName());
+        assertEquals("刘六", userEntityList.get(1).getUserName());
+
+        mockMvc.perform(delete("/user/delete/1"))
+            .andExpect(status().isOk());
+
+        final List<UserEntity> userEntityListAfterDelete = userRepository.findAll();
+        assertEquals(1, userEntityListAfterDelete.size());
+        assertEquals("刘六", userEntityListAfterDelete.get(0).getUserName());
     }
 }
