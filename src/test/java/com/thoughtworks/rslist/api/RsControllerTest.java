@@ -233,28 +233,23 @@ class RsControllerTest {
         assertEquals("事件1", modifyRsEventEntity.getEventName());
         assertEquals("非经济", modifyRsEventEntity.getKeywords());
     }
-//
-//    @Test
-//    void should_delete_rs_event() throws Exception {
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-//            .andExpect(jsonPath("$[1].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-//            .andExpect(jsonPath("$[2].keywords", is("无分类")));
-//
-//        mockMvc.perform(delete("/rs/delete/2"))
-//            .andExpect(status().isOk());
-//
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(2)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[1].eventName", is("第三条事件")))
-//            .andExpect(jsonPath("$[1].keywords", is("无分类")));
-//    }
+
+    @Test
+    void should_delete_rs_event() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        mockMvc.perform(get("/rs/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)));
+
+        mockMvc.perform(delete("/rs/delete/{id}", rsEventEntity.getId()))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(0)));
+    }
 }

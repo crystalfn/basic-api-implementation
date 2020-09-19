@@ -129,9 +129,9 @@ public class RsController {
         return ResponseEntity.badRequest().build();
     }
 
-    @DeleteMapping("rs/delete/{index}")
-    public ResponseEntity deleteRsEvent(@PathVariable int index) {
-        rsList.remove(index - 1);
+    @DeleteMapping("rs/delete/{id}")
+    public ResponseEntity deleteRsEvent(@PathVariable int id) {
+        rsEventRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }
