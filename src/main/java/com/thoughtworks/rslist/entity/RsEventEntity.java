@@ -25,7 +25,5 @@ public class RsEventEntity {
     @Column(name = "name")
     private String eventName;
     private String keywords;
-
-
     private int userId;
 }

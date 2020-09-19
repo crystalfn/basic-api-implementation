@@ -44,12 +44,7 @@ class UserControllerTest {
 
     @BeforeEach
     public void initRepository() {
-    }
-
-    @AfterEach
-    public void resetRepository() {
         userRepository.deleteAll();
-        rsEventRepository.deleteAll();
     }
 
     @Test
