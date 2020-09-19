@@ -28,17 +28,12 @@ public class RsEvent {
     private String keywords;
 
     @NotNull
-    @JsonView(WithoutUser.class)
+    @JsonView(WithUser.class)
     private int userId;
 
     @Valid
     @JsonView(WithUser.class)
     private UserDto user;
-
-    public RsEvent(String eventName, String keywords) {
-        this.eventName = eventName;
-        this.keywords = keywords;
-    }
 
     public static RsEvent convertRsEventEntityToRsEvent(RsEventEntity rsEventEntity) {
         return RsEvent.builder()

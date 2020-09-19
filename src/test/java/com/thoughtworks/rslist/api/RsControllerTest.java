@@ -7,6 +7,7 @@ import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.utils.DtoUtils;
 import com.thoughtworks.rslist.utils.EntityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,8 +60,7 @@ class RsControllerTest {
         mockMvc.perform(get("/rs/{id}", rsEventEntity.getId()))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.eventName", is("事件1")))
-            .andExpect(jsonPath("$.keywords", is("经济")))
-            .andExpect(jsonPath("$.user").doesNotExist());
+            .andExpect(jsonPath("$.keywords", is("经济")));
     }
 
     @Test
@@ -87,44 +87,53 @@ class RsControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
             .andExpect(jsonPath("$[0].eventName", is("事件1")))
-            .andExpect(jsonPath("$[0].keywords", is("经济")))
-            .andExpect(jsonPath("$[0].user").doesNotExist());
+            .andExpect(jsonPath("$[0].keywords", is("经济")));
     }
 
-//    @Test
-//    void should_add_one_rs_event_when_user_exit() throws Exception {
-//        UserEntity userEntity = EntityUtil.createUserEntity();
-//        userRepository.save(userEntity);
-//        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
-//        rsEventRepository.save(rsEventEntity);
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        final String jsonValue = objectMapper.writeValueAsString(rsEventEntity);
-//
-//        mockMvc.perform(post("/rs/addEvent")
-//            .content(jsonValue)
-//            .contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(status().isCreated());
-//
-//        final List<RsEventEntity> rsEvents = rsEventRepository.findAll();
-//        assertEquals(1, rsEvents.size());
-//        assertEquals("事件1", rsEvents.get(0).getEventName());
-//        assertEquals(userEntity.getId(), rsEvents.get(0).getId());
-//    }
-//
-//    @Test
-//    void should_not_add_one_rs_event_when_user_not_exit() throws Exception {
-//        String jsonValue = "{\"eventName\":\"新事件\",\"keyword\":\"经济\",\"userId\": 1}";
-//
-//        mockMvc.perform(post("/rs/addEvent")
-//            .content(jsonValue)
-//            .contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(status().isBadRequest());
-//
-//        final List<RsEventEntity> rsEvents = rsEventRepository.findAll();
-//        assertEquals(0, rsEvents.size());
-//    }
-//
+    @Test
+    void should_add_one_rs_event_when_user_exit() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        final int userId = userEntity.getId();
+        final RsEvent rsEvent = RsEvent.builder()
+            .eventName("事件1")
+            .keywords("经济")
+            .userId(userId)
+            .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String jsonValue = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/addEvent")
+            .content(jsonValue)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated());
+
+        final List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        assertEquals(1, rsEvents.size());
+        assertEquals("事件1", rsEvents.get(0).getEventName());
+    }
+
+    @Test
+    void should_not_add_one_rs_event_when_user_not_exit() throws Exception {
+        final RsEvent rsEvent = RsEvent.builder()
+            .eventName("事件1")
+            .keywords("经济")
+            .userId(111)
+            .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String jsonValue = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/addEvent")
+            .content(jsonValue)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+
+        final List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        assertEquals(0, rsEvents.size());
+    }
+
 //    @Test
 //    void should_modify_rs_event_message_when_keywords_is_null() throws Exception {
 //        mockMvc.perform(get("/rs/list"))

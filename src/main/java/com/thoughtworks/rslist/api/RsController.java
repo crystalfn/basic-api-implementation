@@ -96,37 +96,39 @@ public class RsController {
                 .collect(Collectors.toList()).subList(start - 1, end));
     }
 
-//    @PostMapping("rs/addEvent")
-//    public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
-//        if (!userRepository.existsById(UserEntity.convertUserToUserEntity(rsEvent.getUser()).getId())) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//
-//        RsEventEntity rsEventEntity = RsEventEntity.builder()
-//            .eventName(rsEvent.getEventName())
-//            .keywords(rsEvent.getKeywords())
-//            .userEntity(UserEntity.convertUserToUserEntity(rsEvent.getUser()))
-//            .build();
-//        rsEventRepository.save(rsEventEntity);
-//        return ResponseEntity.created(null).build();
-//    }
+    @PostMapping("rs/addEvent")
+    public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
+        if (!userRepository.existsById(rsEvent.getUserId())) {
+            return ResponseEntity.badRequest().build();
+        }
 
-//    @PutMapping("rs/modify/{index}")
-//    public ResponseEntity modifyRsEvent(@PathVariable int index,
-//                                        @RequestBody RsEvent rsEvent) {
-//        RsEvent modifyRsEvent = rsList.get(index - 1);
-//        if (rsEvent.getEventName() != null) {
-//            modifyRsEvent.setEventName(rsEvent.getEventName());
-//        }
-//        if (rsEvent.getKeywords() != null) {
-//            modifyRsEvent.setKeywords(rsEvent.getKeywords());
-//        }
-//        return ResponseEntity.ok().build();
-//    }
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+            .eventName(rsEvent.getEventName())
+            .keywords(rsEvent.getKeywords())
+            .userEntity(UserEntity.builder()
+                    .id(rsEvent.getUserId())
+                    .build())
+            .build();
+        rsEventRepository.save(rsEventEntity);
+        return ResponseEntity.created(null).build();
+    }
 
-//    @DeleteMapping("rs/delete/{index}")
-//    public ResponseEntity deleteRsEvent(@PathVariable int index) {
-//        rsList.remove(index - 1);
-//        return ResponseEntity.ok().build();
-//    }
+    @PutMapping("rs/modify/{index}")
+    public ResponseEntity modifyRsEvent(@PathVariable int index,
+                                        @RequestBody RsEvent rsEvent) {
+        RsEvent modifyRsEvent = rsList.get(index - 1);
+        if (rsEvent.getEventName() != null) {
+            modifyRsEvent.setEventName(rsEvent.getEventName());
+        }
+        if (rsEvent.getKeywords() != null) {
+            modifyRsEvent.setKeywords(rsEvent.getKeywords());
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("rs/delete/{index}")
+    public ResponseEntity deleteRsEvent(@PathVariable int index) {
+        rsList.remove(index - 1);
+        return ResponseEntity.ok().build();
+    }
 }
