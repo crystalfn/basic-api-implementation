@@ -38,20 +38,12 @@ public class UserController {
 
     @PostMapping("/user/register")
     public ResponseEntity register(@Valid @RequestBody UserDto userDto) {
-        userService.register(userDto);
-
-        UserEntity userEntity = UserEntity.builder()
-            .userName(userDto.getUserName())
-            .age(userDto.getAge())
-            .gender(userDto.getGender())
-            .email(userDto.getEmail())
-            .phone(userDto.getPhone())
-            .build();
+        UserEntity userEntity = UserEntity.convertUserToUserEntity(userDto);
         userRepository.save(userEntity);
 
         return ResponseEntity
             .created(null)
-            .header("index", String.valueOf(userService.getUserDtoList().size()))
+            .header("index", String.valueOf(userRepository.findAll().size()))
             .build();
     }
 

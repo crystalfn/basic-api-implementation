@@ -6,8 +6,8 @@ import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.utils.DtoUtils;
 import com.thoughtworks.rslist.utils.EntityUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ class UserControllerTest {
 
     @Test
     void should_register_user() throws Exception {
-        UserDto userDto = new UserDto("crystal", 25, "female", "crystal@qq.com", "13177777777");
+        UserDto userDto = DtoUtils.createUser();
         ObjectMapper objectMapper = new ObjectMapper();
         String userDtoJson = objectMapper.writeValueAsString(userDto);
 
@@ -57,11 +57,11 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
-            .andExpect(header().string("index", String.valueOf(2)));
+            .andExpect(header().string("index", String.valueOf(1)));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(1, userEntityList.size());
-        assertEquals("crystal", userEntityList.get(0).getUserName());
+        assertEquals("张三", userEntityList.get(0).getUserName());
     }
 
     @Test
@@ -74,6 +74,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -86,6 +89,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -98,6 +104,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -110,6 +119,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -122,6 +134,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -134,6 +149,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -146,6 +164,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -158,6 +179,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -182,6 +206,9 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -194,23 +221,20 @@ class UserControllerTest {
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
     void get_user_by_user_id() throws Exception {
-        UserEntity userEntity = UserEntity.builder()
-            .userName("王五")
-            .age(22)
-            .gender("male")
-            .email("five@qq.com")
-            .phone("13011111111")
-            .build();
+        UserEntity userEntity = EntityUtil.createUserEntity();
         userRepository.save(userEntity);
 
         mockMvc.perform(get("/user/1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.userName", is("王五")))
+            .andExpect(jsonPath("$.userName", is("张三")))
             .andExpect(jsonPath("$.age", is(22)));
     }
 
@@ -222,14 +246,14 @@ class UserControllerTest {
         RsEventEntity rsEventEntityFirst = RsEventEntity.builder()
             .eventName("事件1")
             .keywords("新闻")
-            .userId(userEntity.getId())
+            .userEntity(userEntity)
             .build();
         rsEventRepository.save(rsEventEntityFirst);
 
         RsEventEntity rsEventEntitySecond = RsEventEntity.builder()
             .eventName("事件2")
             .keywords("新闻")
-            .userId(userEntity.getId())
+            .userEntity(userEntity)
             .build();
         rsEventRepository.save(rsEventEntitySecond);
 
