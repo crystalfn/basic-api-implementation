@@ -1,10 +1,11 @@
 package com.thoughtworks.rslist.api;
 
+import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
-import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -27,12 +29,8 @@ public class UserController {
     final
     RsEventRepository rsEventRepository;
 
-    final
-    UserService userService;
-
-    public UserController(UserRepository userRepository, UserService userService, RsEventRepository rsEventRepository) {
+    public UserController(UserRepository userRepository, RsEventRepository rsEventRepository) {
         this.userRepository = userRepository;
-        this.userService = userService;
         this.rsEventRepository = rsEventRepository;
     }
 
@@ -49,7 +47,11 @@ public class UserController {
 
     @GetMapping("/user/list")
     public ResponseEntity<List<UserDto>> getAllUser() {
-        return ResponseEntity.ok(userService.getUserDtoList());
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        return ResponseEntity.ok(
+            userEntityList.stream()
+                .map(UserDto::convertUserEntityToUserDto)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/user/{id}")

@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.rslist.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,4 +45,14 @@ public class UserDto {
     @Pattern(regexp = "^1\\d{10}$")
     @JsonProperty(value = "user_phone")
     private String phone;
+
+    public static UserDto convertUserEntityToUserDto(UserEntity userEntity) {
+        return UserDto.builder()
+            .userName(userEntity.getUserName())
+            .gender(userEntity.getGender())
+            .email(userEntity.getEmail())
+            .phone(userEntity.getPhone())
+            .age(userEntity.getAge())
+            .build();
+    }
 }
