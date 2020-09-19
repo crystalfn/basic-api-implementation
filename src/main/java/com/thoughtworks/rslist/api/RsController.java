@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -77,8 +78,7 @@ public class RsController {
         if (start == null || end == null) {
             return ResponseEntity.ok(
                 rsEvents.stream()
-                    .map(item ->
-                        RsEvent.builder()
+                    .map(item -> RsEvent.builder()
                             .eventName(item.getEventName())
                             .keywords(item.getKeywords())
                             .userId(item.getId())
@@ -87,8 +87,7 @@ public class RsController {
         }
         return ResponseEntity.ok(
             rsEvents.stream()
-                .map(item ->
-                    RsEvent.builder()
+                .map(item -> RsEvent.builder()
                         .eventName(item.getEventName())
                         .keywords(item.getKeywords())
                         .userId(item.getId())
@@ -113,17 +112,21 @@ public class RsController {
         return ResponseEntity.created(null).build();
     }
 
-    @PutMapping("rs/modify/{index}")
-    public ResponseEntity modifyRsEvent(@PathVariable int index,
+    @PatchMapping("rs/update/{id}")
+    public ResponseEntity modifyRsEvent(@PathVariable int id,
                                         @RequestBody RsEvent rsEvent) {
-        RsEvent modifyRsEvent = rsList.get(index - 1);
-        if (rsEvent.getEventName() != null) {
-            modifyRsEvent.setEventName(rsEvent.getEventName());
+        final RsEventEntity rsEventEntity = rsEventRepository.findById(id).get();
+        if (rsEvent.getUserId() == rsEventEntity.getUserEntity().getId()) {
+            if (rsEvent.getEventName() != null) {
+                rsEventEntity.setEventName(rsEvent.getEventName());
+            }
+            if (rsEvent.getKeywords() != null) {
+                rsEventEntity.setKeywords(rsEvent.getKeywords());
+            }
+            rsEventRepository.save(rsEventEntity);
+            return ResponseEntity.ok().build();
         }
-        if (rsEvent.getKeywords() != null) {
-            modifyRsEvent.setKeywords(rsEvent.getKeywords());
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("rs/delete/{index}")

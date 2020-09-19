@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.UserDto;
@@ -25,6 +26,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -134,13 +136,38 @@ class RsControllerTest {
         assertEquals(0, rsEvents.size());
     }
 
+    @Test
+    void should_update_rs_event_when_user_id_and_rs_event_id_related() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        final RsEvent rsEvent = RsEvent.builder()
+            .eventName("更新事件")
+            .keywords("经济")
+            .userId(userEntity.getId())
+            .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String modifyEventJson = objectMapper.writeValueAsString(rsEvent);
+
+        final Integer rsEventEntityId = rsEventEntity.getId();
+        mockMvc.perform(patch("/rs/update/{id}", rsEventEntityId)
+            .content(modifyEventJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        final RsEventEntity modifyRsEventEntity = rsEventRepository.findById(rsEventEntityId).get();
+        assertEquals("更新事件", modifyRsEventEntity.getEventName());
+        assertEquals("经济", modifyRsEventEntity.getKeywords());
+    }
+
 //    @Test
 //    void should_modify_rs_event_message_when_keywords_is_null() throws Exception {
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("无分类")));
+//        UserEntity userEntity = EntityUtil.createUserEntity();
+//        userRepository.save(userEntity);
+//        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+//        rsEventRepository.save(rsEventEntity);
 //
 //        RsEvent rsEvent = new RsEvent("这是一条被修改的事件", null);
 //        ObjectMapper objectMapper = new ObjectMapper();
