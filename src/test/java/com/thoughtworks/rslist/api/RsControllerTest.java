@@ -162,6 +162,28 @@ class RsControllerTest {
         assertEquals("经济", modifyRsEventEntity.getKeywords());
     }
 
+    @Test
+    void should_not_update_rs_event_when_user_id_and_rs_event_id_unrelated() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        final RsEvent rsEvent = RsEvent.builder()
+            .eventName("更新事件")
+            .keywords("经济")
+            .userId(111)
+            .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String modifyEventJson = objectMapper.writeValueAsString(rsEvent);
+
+        final Integer rsEventEntityId = rsEventEntity.getId();
+        mockMvc.perform(patch("/rs/update/{id}", rsEventEntityId)
+            .content(modifyEventJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+    }
+
 //    @Test
 //    void should_modify_rs_event_message_when_keywords_is_null() throws Exception {
 //        UserEntity userEntity = EntityUtil.createUserEntity();
