@@ -2,10 +2,12 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,11 +25,15 @@ public class UserController {
     UserRepository userRepository;
 
     final
+    RsEventRepository rsEventRepository;
+
+    final
     UserService userService;
 
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(UserRepository userRepository, UserService userService, RsEventRepository rsEventRepository) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.rsEventRepository = rsEventRepository;
     }
 
     @PostMapping("/user/register")
@@ -60,8 +66,10 @@ public class UserController {
     }
 
     @DeleteMapping("/user/delete/{id}")
-    public ResponseEntity deleteUserById(@PathVariable Integer id) {
+    @Transactional
+    public ResponseEntity deleteUserById(@PathVariable int id) {
         userRepository.deleteById(id);
-        return ResponseEntity.ok(null);
+        rsEventRepository.deleteAllByUserId(id);
+        return ResponseEntity.ok().build();
     }
 }

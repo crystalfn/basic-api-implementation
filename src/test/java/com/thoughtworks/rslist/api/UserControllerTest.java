@@ -2,8 +2,12 @@ package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.utils.EntityUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +39,17 @@ class UserControllerTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    RsEventRepository rsEventRepository;
+
     @BeforeEach
-    public void resetUserRepository() {
+    public void initRepository() {
+    }
+
+    @AfterEach
+    public void resetRepository() {
         userRepository.deleteAll();
+        rsEventRepository.deleteAll();
     }
 
     @Test
@@ -208,35 +220,35 @@ class UserControllerTest {
     }
 
     @Test
-    void delete_user_by_user_id() throws Exception {
-        UserEntity userEntityFirst = UserEntity.builder()
-            .userName("王五")
-            .age(22)
-            .gender("male")
-            .email("five@qq.com")
-            .phone("13011111111")
-            .build();
-        userRepository.save(userEntityFirst);
+    void delete_user_and_user_created_rs_events_by_user_id() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
 
-        UserEntity userEntitySecond = UserEntity.builder()
-            .userName("刘六")
-            .age(22)
-            .gender("male")
-            .email("five@qq.com")
-            .phone("13011111111")
+        RsEventEntity rsEventEntityFirst = RsEventEntity.builder()
+            .eventName("事件1")
+            .keywords("新闻")
+            .userId(userEntity.getId())
             .build();
-        userRepository.save(userEntitySecond);
+        rsEventRepository.save(rsEventEntityFirst);
+
+        RsEventEntity rsEventEntitySecond = RsEventEntity.builder()
+            .eventName("事件2")
+            .keywords("新闻")
+            .userId(userEntity.getId())
+            .build();
+        rsEventRepository.save(rsEventEntitySecond);
 
         final List<UserEntity> userEntityList = userRepository.findAll();
-        assertEquals(2, userEntityList.size());
-        assertEquals("王五", userEntityList.get(0).getUserName());
-        assertEquals("刘六", userEntityList.get(1).getUserName());
+        assertEquals(1, userEntityList.size());
+        final List<RsEventEntity> rsEventEntityList = rsEventRepository.findAll();
+        assertEquals(2, rsEventEntityList.size());
 
         mockMvc.perform(delete("/user/delete/1"))
             .andExpect(status().isOk());
 
         final List<UserEntity> userEntityListAfterDelete = userRepository.findAll();
-        assertEquals(1, userEntityListAfterDelete.size());
-        assertEquals("刘六", userEntityListAfterDelete.get(0).getUserName());
+        assertEquals(0, userEntityListAfterDelete.size());
+        final List<RsEventEntity> rsEventEntityListAfterDelete =  rsEventRepository.findAll();
+        assertEquals(0, rsEventEntityListAfterDelete.size());
     }
 }
