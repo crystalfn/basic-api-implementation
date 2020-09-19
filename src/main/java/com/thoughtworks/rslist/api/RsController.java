@@ -57,12 +57,7 @@ public class RsController {
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
         return ResponseEntity.ok(
             rsEvents.stream()
-                .map(item ->
-                    RsEvent.builder()
-                        .eventName(item.getEventName())
-                        .keywords(item.getKeywords())
-                        .userId(item.getId())
-                        .build())
+                .map(RsEvent::convertRsEventEntityToRsEvent)
                 .collect(Collectors.toList()));
     }
 
@@ -73,20 +68,12 @@ public class RsController {
         if (start == null || end == null) {
             return ResponseEntity.ok(
                 rsEvents.stream()
-                    .map(item -> RsEvent.builder()
-                            .eventName(item.getEventName())
-                            .keywords(item.getKeywords())
-                            .userId(item.getId())
-                            .build())
+                    .map(RsEvent::convertRsEventEntityToRsEvent)
                     .collect(Collectors.toList()));
         }
         return ResponseEntity.ok(
             rsEvents.stream()
-                .map(item -> RsEvent.builder()
-                        .eventName(item.getEventName())
-                        .keywords(item.getKeywords())
-                        .userId(item.getId())
-                        .build())
+                .map(RsEvent::convertRsEventEntityToRsEvent)
                 .collect(Collectors.toList()).subList(start - 1, end));
     }
 

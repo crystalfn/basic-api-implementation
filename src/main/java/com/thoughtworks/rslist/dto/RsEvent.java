@@ -39,6 +39,7 @@ public class RsEvent {
         return RsEvent.builder()
             .eventName(rsEventEntity.getEventName())
             .keywords(rsEventEntity.getKeywords())
+            .userId(rsEventEntity.getUserEntity().getId())
             .build();
     }
 }
