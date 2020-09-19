@@ -1,103 +1,105 @@
-//package com.thoughtworks.rslist.api;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.thoughtworks.rslist.dto.RsEvent;
-//import com.thoughtworks.rslist.dto.UserDto;
-//import com.thoughtworks.rslist.entity.RsEventEntity;
-//import com.thoughtworks.rslist.entity.UserEntity;
-//import com.thoughtworks.rslist.repository.RsEventRepository;
-//import com.thoughtworks.rslist.repository.UserRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.annotation.DirtiesContext;
-//import org.springframework.test.web.servlet.MockMvc;
-//
-//import java.util.List;
-//
-//import static org.hamcrest.Matchers.*;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-//@SpringBootTest
-//@AutoConfigureMockMvc
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-//class RsControllerTest {
-//
-//    @Autowired
-//    MockMvc mockMvc;
-//
-//    @Autowired
-//    UserRepository userRepository;
-//
-//    @Autowired
-//    RsEventRepository rsEventRepository;
-//
-//    @BeforeEach
-//    public void resetUserRepository() {
-//        userRepository.deleteAll();
-//        rsEventRepository.deleteAll();
-//    }
-//
-//    @Test
-//    void should_get_one_rs_event() throws Exception {
-//        mockMvc.perform(get("/rs/1"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$.eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$.keywords", is("无分类")))
-//            .andExpect(jsonPath("$.user").doesNotExist());
-//    }
-//
-//    @Test
-//    void should_get_rs_event_by_range() throws Exception {
-//        mockMvc.perform(get("/rs/event?start=1&end=3"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-//            .andExpect(jsonPath("$[1].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-//            .andExpect(jsonPath("$[2].keywords", is("无分类")));
-//    }
-//
-//    @Test
-//    void should_get_all_rs_event() throws Exception {
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[0].user").doesNotExist())
-//            .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-//            .andExpect(jsonPath("$[1].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[1].user").doesNotExist())
-//            .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-//            .andExpect(jsonPath("$[2].keywords", is("无分类")))
-//            .andExpect(jsonPath("$[2].user").doesNotExist());
-//    }
-//
+package com.thoughtworks.rslist.api;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.dto.RsEvent;
+import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.entity.RsEventEntity;
+import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.utils.EntityUtil;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.web.servlet.MockMvc;
+
+import javax.swing.text.html.parser.Entity;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+class RsControllerTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    RsEventRepository rsEventRepository;
+
+    @BeforeEach
+    public void resetUserRepository() {
+        userRepository.deleteAll();
+    }
+
+    @Test
+    void should_get_one_rs_event() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        mockMvc.perform(get("/rs/{id}", rsEventEntity.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.eventName", is("事件1")))
+            .andExpect(jsonPath("$.keywords", is("经济")))
+            .andExpect(jsonPath("$.user").doesNotExist());
+    }
+
+    @Test
+    void should_get_rs_event_by_range() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+        mockMvc.perform(get("/rs/event?start=1&end=1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].eventName", is("事件1")))
+            .andExpect(jsonPath("$[0].keywords", is("经济")));
+    }
+
+    @Test
+    void should_get_all_rs_event() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        mockMvc.perform(get("/rs/list"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].eventName", is("事件1")))
+            .andExpect(jsonPath("$[0].keywords", is("经济")))
+            .andExpect(jsonPath("$[0].user").doesNotExist());
+    }
+
 //    @Test
 //    void should_add_one_rs_event_when_user_exit() throws Exception {
-//        UserEntity userEntity = UserEntity.builder()
-//            .userName("张三")
-//            .age(22)
-//            .gender("male")
-//            .email("five@qq.com")
-//            .phone("13011111111")
-//            .build();
+//        UserEntity userEntity = EntityUtil.createUserEntity();
 //        userRepository.save(userEntity);
+//        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+//        rsEventRepository.save(rsEventEntity);
 //
-//        String jsonValue = "{\"eventName\":\"新事件\",\"keyword\":\"经济\",\"userId\": " + userEntity.getId() + "}";
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        final String jsonValue = objectMapper.writeValueAsString(rsEventEntity);
 //
 //        mockMvc.perform(post("/rs/addEvent")
 //            .content(jsonValue)
@@ -106,7 +108,7 @@
 //
 //        final List<RsEventEntity> rsEvents = rsEventRepository.findAll();
 //        assertEquals(1, rsEvents.size());
-//        assertEquals("新事件", rsEvents.get(0).getEventName());
+//        assertEquals("事件1", rsEvents.get(0).getEventName());
 //        assertEquals(userEntity.getId(), rsEvents.get(0).getId());
 //    }
 //
@@ -218,4 +220,4 @@
 //            .andExpect(jsonPath("$[1].eventName", is("第三条事件")))
 //            .andExpect(jsonPath("$[1].keywords", is("无分类")));
 //    }
-//}
+}

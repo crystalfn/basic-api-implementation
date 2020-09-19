@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.utils;
 
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 
 public class EntityUtil {
@@ -10,6 +11,14 @@ public class EntityUtil {
             .gender("male")
             .email("three@qq.com")
             .phone("13100000000")
+            .build();
+    }
+
+    public static RsEventEntity createRsEventEntity(UserEntity userEntity) {
+        return RsEventEntity.builder()
+            .eventName("事件1")
+            .keywords("经济")
+            .userEntity(userEntity)
             .build();
     }
 }

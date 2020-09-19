@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class RsController {
@@ -47,37 +48,64 @@ public class RsController {
         return tempList;
     }
 
-//    @JsonView(RsEvent.WithoutUser.class)
-//    @GetMapping("/rs/{index}")
-//    public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int index) {
-//        return ResponseEntity.ok(rsList.get(index - 1));
-//    }
+    @JsonView(RsEvent.WithoutUser.class)
+    @GetMapping("/rs/{id}")
+    public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int id) {
+        final RsEvent rsEvent = RsEvent.convertRsEventEntityToRsEvent(rsEventRepository.findById(id).get());
+        return ResponseEntity.ok(rsEvent);
+    }
 
-//    @JsonView(RsEvent.WithoutUser.class)
-//    @GetMapping("rs/list")
-//    public ResponseEntity<List<RsEvent>> getAllEvents() {
-//        return ResponseEntity.ok(rsList);
-//    }
+    @JsonView(RsEvent.WithoutUser.class)
+    @GetMapping("rs/list")
+    public ResponseEntity<List<RsEvent>> getAllEvents() {
+        List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        return ResponseEntity.ok(
+            rsEvents.stream()
+                .map(item ->
+                    RsEvent.builder()
+                        .eventName(item.getEventName())
+                        .keywords(item.getKeywords())
+                        .userId(item.getId())
+                        .build())
+                .collect(Collectors.toList()));
+    }
 
-//    @GetMapping("rs/event")
-//    public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
-//                                                           @RequestParam(required = false) Integer end) {
-//        if (start == null || end == null) {
-//            return ResponseEntity.ok(rsList);
-//        }
-//        return ResponseEntity.ok(rsList.subList(start - 1, end));
-//    }
+    @GetMapping("rs/event")
+    public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
+                                                           @RequestParam(required = false) Integer end) {
+        List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        if (start == null || end == null) {
+            return ResponseEntity.ok(
+                rsEvents.stream()
+                    .map(item ->
+                        RsEvent.builder()
+                            .eventName(item.getEventName())
+                            .keywords(item.getKeywords())
+                            .userId(item.getId())
+                            .build())
+                    .collect(Collectors.toList()));
+        }
+        return ResponseEntity.ok(
+            rsEvents.stream()
+                .map(item ->
+                    RsEvent.builder()
+                        .eventName(item.getEventName())
+                        .keywords(item.getKeywords())
+                        .userId(item.getId())
+                        .build())
+                .collect(Collectors.toList()).subList(start - 1, end));
+    }
 
 //    @PostMapping("rs/addEvent")
 //    public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
-//        if(!userRepository.existsById(UserEntity.convertUserToUserEntity(rsEvent.getUser()).getId())) {
+//        if (!userRepository.existsById(UserEntity.convertUserToUserEntity(rsEvent.getUser()).getId())) {
 //            return ResponseEntity.badRequest().build();
 //        }
 //
 //        RsEventEntity rsEventEntity = RsEventEntity.builder()
 //            .eventName(rsEvent.getEventName())
 //            .keywords(rsEvent.getKeywords())
-//            .user(UserEntity.convertUserToUserEntity(rsEvent.getUser()))
+//            .userEntity(UserEntity.convertUserToUserEntity(rsEvent.getUser()))
 //            .build();
 //        rsEventRepository.save(rsEventEntity);
 //        return ResponseEntity.created(null).build();
