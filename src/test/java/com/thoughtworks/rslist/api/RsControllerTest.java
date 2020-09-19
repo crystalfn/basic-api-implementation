@@ -208,54 +208,31 @@ class RsControllerTest {
         assertEquals("更新事件", modifyRsEventEntity.getEventName());
         assertEquals("经济", modifyRsEventEntity.getKeywords());
     }
-//
-//    @Test
-//    void should_modify_rs_event_message_when_eventName_is_null() throws Exception {
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("无分类")));
-//
-//        RsEvent rsEvent = new RsEvent(null, "被修改的分类");
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        final String modifyRsEvent = objectMapper.writeValueAsString(rsEvent);
-//
-//        mockMvc.perform(put("/rs/modify/1")
-//            .content(modifyRsEvent)
-//            .contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(status().isOk());
-//
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("被修改的分类")));
-//    }
-//
-//    @Test
-//    void should_modify_rs_event_message_when_both_not_null() throws Exception {
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("无分类")));
-//
-//        RsEvent rsEvent = new RsEvent("这是一条被修改的事件", "被修改的分类");
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        final String modifyRsEvent = objectMapper.writeValueAsString(rsEvent);
-//
-//        mockMvc.perform(put("/rs/modify/1")
-//            .content(modifyRsEvent)
-//            .contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(status().isOk());
-//
-//        mockMvc.perform(get("/rs/list"))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", hasSize(3)))
-//            .andExpect(jsonPath("$[0].eventName", is("这是一条被修改的事件")))
-//            .andExpect(jsonPath("$[0].keywords", is("被修改的分类")));
-//    }
+
+    @Test
+    void should_only_update_rs_event_keywords_when_name_is_null() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        final RsEvent rsEvent = RsEvent.builder()
+            .keywords("非经济")
+            .userId(userEntity.getId())
+            .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String modifyEventJson = objectMapper.writeValueAsString(rsEvent);
+
+        final Integer rsEventEntityId = rsEventEntity.getId();
+        mockMvc.perform(patch("/rs/update/{id}", rsEventEntityId)
+            .content(modifyEventJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        final RsEventEntity modifyRsEventEntity = rsEventRepository.findById(rsEventEntityId).get();
+        assertEquals("事件1", modifyRsEventEntity.getEventName());
+        assertEquals("非经济", modifyRsEventEntity.getKeywords());
+    }
 //
 //    @Test
 //    void should_delete_rs_event() throws Exception {
