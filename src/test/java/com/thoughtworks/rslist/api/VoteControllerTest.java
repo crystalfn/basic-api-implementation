@@ -104,6 +104,23 @@ class VoteControllerTest {
             .content(voteJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    void should_vote_fail_when_rs_event_id_not_exits() throws Exception {
+        int voteNumber = 7;
+        final VoteDto voteDto = VoteDto.builder()
+            .rsEventId(111)
+            .userId(userEntity.getId())
+            .voteNumber(voteNumber)
+            .voteTime(null)
+            .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String voteJson = objectMapper.writeValueAsString(voteDto);
+
+        mockMvc.perform(post("/rs/vote/{rsEventId}", 111)
+            .content(voteJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 }
