@@ -35,6 +35,10 @@ public class RsEvent {
     @JsonView(WithUser.class)
     private UserDto user;
 
+    @Valid
+    @JsonView(WithUser.class)
+    private int voteNumber;
+
     public static RsEvent convertRsEventEntityToRsEvent(RsEventEntity rsEventEntity) {
         return RsEvent.builder()
             .eventName(rsEventEntity.getEventName())

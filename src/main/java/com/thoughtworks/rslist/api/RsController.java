@@ -32,16 +32,9 @@ public class RsController {
     final
     RsEventRepository rsEventRepository;
 
-    private final List<RsEvent> rsList = initRsList();
-
     public RsController(UserRepository userRepository, RsEventRepository rsEventRepository) {
         this.userRepository = userRepository;
         this.rsEventRepository = rsEventRepository;
-    }
-
-    private List<RsEvent> initRsList() {
-        List<RsEvent> tempList = new ArrayList<>();
-        return tempList;
     }
 
     @JsonView(RsEvent.WithoutUser.class)

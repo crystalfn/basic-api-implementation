@@ -46,6 +46,16 @@ public class UserDto {
     @JsonProperty(value = "user_phone")
     private String phone;
 
+    private int voteNumber;
+
+    public UserDto(String userName, Integer age, String gender, String email, String phone) {
+        this.userName = userName;
+        this.age = age;
+        this.gender = gender;
+        this.email = email;
+        this.phone = phone;
+    }
+
     public static UserDto convertUserEntityToUserDto(UserEntity userEntity) {
         return UserDto.builder()
             .userName(userEntity.getUserName())

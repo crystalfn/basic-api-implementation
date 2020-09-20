@@ -11,6 +11,7 @@ public class EntityUtil {
             .gender("male")
             .email("three@qq.com")
             .phone("13100000000")
+            .voteNumber(10)
             .build();
     }
 

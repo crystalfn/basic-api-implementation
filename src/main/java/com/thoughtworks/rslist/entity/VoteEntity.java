@@ -5,32 +5,33 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "rs_event")
+@Table(name = "vote")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RsEventEntity {
+public class VoteEntity {
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "name")
-    private String eventName;
-    private String keywords;
+    private int voteNumber;
+    private LocalDateTime voteTime;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    private int voteNumber;
+    @ManyToOne
+    @JoinColumn(name = "rs_event_id")
+    private RsEventEntity rsEventEntity;
 }
