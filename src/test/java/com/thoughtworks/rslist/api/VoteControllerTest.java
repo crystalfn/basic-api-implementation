@@ -9,6 +9,7 @@ import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
 import com.thoughtworks.rslist.utils.EntityUtil;
+import com.thoughtworks.rslist.utils.VoteUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -140,5 +145,22 @@ class VoteControllerTest {
             .content(voteJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_get_votes_by_user_id_and_rs_event_id () throws Exception {
+        for (int i = 1; i < 5; i++) {
+            final VoteEntity voteEntity = VoteUtils.setVote(userEntity, rsEventEntity, i);
+            voteRepository.save(voteEntity);
+        }
+
+        mockMvc.perform(get("/votes/")
+            .param("userEntityId", String.valueOf(userEntity.getId()))
+            .param("rsEventEntityId", String.valueOf(rsEventEntity.getId())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(4)))
+            .andExpect(jsonPath("$[0].userId", is(userEntity.getId()) ))
+            .andExpect(jsonPath("$[0].rsEventId", is(rsEventEntity.getId())))
+            .andExpect(jsonPath("$[0].voteNumber", is(1)));
     }
 }

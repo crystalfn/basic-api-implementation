@@ -7,14 +7,19 @@ import com.thoughtworks.rslist.entity.VoteEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
+import org.hibernate.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class VoteController {
@@ -56,5 +61,15 @@ public class VoteController {
         userRepository.save(userEntityOptional.get());
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/votes/")
+    public List<VoteDto> getVotes(@RequestParam int userEntityId, @RequestParam int rsEventEntityId) {
+        final List<VoteEntity> votes = voteRepository.findAllByUserEntityIdAndRsEventEntityId(userEntityId, rsEventEntityId);
+        return votes
+            .stream()
+            .map(VoteDto::convertVoteEntityToVoteDto)
+            .collect(Collectors.toList());
+
     }
 }
