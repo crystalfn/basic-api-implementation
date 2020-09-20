@@ -6,11 +6,13 @@ import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.exceptions.InvalidIndexException;
+import com.thoughtworks.rslist.exceptions.InvalidParamException;
 import com.thoughtworks.rslist.exceptions.InvalidRequestParamException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +79,12 @@ public class RsController {
     }
 
     @PostMapping("rs/addEvent")
-    public ResponseEntity addRsEvent(@RequestBody RsEvent rsEvent) {
+    public ResponseEntity addRsEvent(@Valid @RequestBody RsEvent rsEvent,
+                                     BindingResult bindingResult) throws InvalidParamException {
+        if (bindingResult.getAllErrors().size() > 0) {
+            throw new InvalidParamException("invalid param");
+        }
+
         if (!userRepository.existsById(rsEvent.getUserId())) {
             return ResponseEntity.badRequest().build();
         }

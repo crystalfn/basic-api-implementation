@@ -169,6 +169,26 @@ class RsControllerTest {
     }
 
     @Test
+    void should_return_400_when_invalid_params() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        final RsEvent rsEvent = RsEvent.builder()
+            .eventName("事件1")
+            .keywords(null)
+            .userId(userEntity.getId())
+            .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String jsonValue = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/addEvent")
+            .content(jsonValue)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid param")));;
+    }
+
+    @Test
     void should_update_rs_event_when_user_id_and_rs_event_id_related() throws Exception {
         UserEntity userEntity = EntityUtil.createUserEntity();
         userRepository.save(userEntity);
