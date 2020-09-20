@@ -73,7 +73,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -88,7 +89,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -103,7 +105,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -118,7 +121,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -133,7 +137,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -148,7 +153,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -163,7 +169,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -178,7 +185,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -193,7 +201,11 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
+
+        final List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test
@@ -205,7 +217,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());
@@ -220,7 +233,8 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register")
             .content(userDtoJson)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid user")));
 
         final List<UserEntity> userEntityList = userRepository.findAll();
         assertEquals(0, userEntityList.size());

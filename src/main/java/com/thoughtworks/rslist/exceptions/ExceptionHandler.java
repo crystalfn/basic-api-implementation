@@ -8,7 +8,8 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler({
         InvalidIndexException.class,
         InvalidRequestParamException.class,
-        InvalidParamException.class
+        InvalidParamException.class,
+        InvalidUserException.class
     })
     public ResponseEntity<CommentError> handleException(Exception error) {
         CommentError commentError = new CommentError();
