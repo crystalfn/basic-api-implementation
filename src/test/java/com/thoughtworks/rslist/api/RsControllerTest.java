@@ -66,7 +66,18 @@ class RsControllerTest {
             .andExpect(jsonPath("$.keywords", is("经济")))
             .andExpect(jsonPath("$.id", is(rsEventEntity.getId())))
             .andExpect(jsonPath("$.voteNumber", is(0)));
+    }
 
+    @Test
+    void should_return_400_and_error_message_is_invalid_index() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        mockMvc.perform(get("/rs/{id}", 111))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid index")));
     }
 
     @Test

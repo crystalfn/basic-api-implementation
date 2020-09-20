@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.exceptions.InvalidIndexException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,8 +41,13 @@ public class RsController {
 
     @JsonView(RsEvent.WithoutUser.class)
     @GetMapping("/rs/{id}")
-    public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int id) {
-        final RsEvent rsEvent = RsEvent.convertRsEventEntityToRsEvent(rsEventRepository.findById(id).get());
+    public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int id) throws InvalidIndexException {
+        final Optional<RsEventEntity> rsEventEntityOptional = rsEventRepository.findById(id);
+        if (!rsEventEntityOptional.isPresent()) {
+            throw new InvalidIndexException("invalid index");
+        }
+
+        final RsEvent rsEvent = RsEvent.convertRsEventEntityToRsEvent(rsEventEntityOptional.get());
         return ResponseEntity.ok(rsEvent);
     }
 
