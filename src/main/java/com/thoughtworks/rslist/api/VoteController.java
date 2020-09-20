@@ -7,7 +7,6 @@ import com.thoughtworks.rslist.entity.VoteEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
-import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,5 +78,16 @@ public class VoteController {
             .collect(Collectors.toList());
     }
 
-
+    @GetMapping("/votes/byTime")
+    public List<VoteDto> getVotesBetweenStartTimeAndEndTime(@RequestParam String startTime,
+                                  @RequestParam String endTime) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTimeFormatter = LocalDateTime.parse(startTime, dateTimeFormatter);
+        LocalDateTime entTimeFormatter = LocalDateTime.parse(endTime, dateTimeFormatter);
+        final List<VoteEntity> votes = voteRepository.findAllByVoteTimeBetween(startTimeFormatter, entTimeFormatter);
+        return votes
+            .stream()
+            .map(VoteDto::convertVoteEntityToVoteDto)
+            .collect(Collectors.toList());
+    }
 }
