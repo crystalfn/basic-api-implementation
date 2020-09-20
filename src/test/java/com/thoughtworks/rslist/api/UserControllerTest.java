@@ -276,7 +276,7 @@ class UserControllerTest {
         final List<RsEventEntity> rsEventEntityList = rsEventRepository.findAll();
         assertEquals(2, rsEventEntityList.size());
 
-        mockMvc.perform(delete("/user/delete/1"))
+        mockMvc.perform(delete("/user/1"))
             .andExpect(status().isOk());
 
         final List<UserEntity> userEntityListAfterDelete = userRepository.findAll();

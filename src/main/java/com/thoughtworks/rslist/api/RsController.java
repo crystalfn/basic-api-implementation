@@ -65,7 +65,7 @@ public class RsController {
                 .collect(Collectors.toList()));
     }
 
-    @GetMapping("rs/event")
+    @GetMapping("rs/events")
     public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
                                                            @RequestParam(required = false) Integer end) throws InvalidRequestParamException {
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
@@ -78,7 +78,7 @@ public class RsController {
                 .collect(Collectors.toList()).subList(start - 1, end));
     }
 
-    @PostMapping("rs/addEvent")
+    @PostMapping("rs/event")
     public ResponseEntity addRsEvent(@Valid @RequestBody RsEvent rsEvent,
                                      BindingResult bindingResult) throws InvalidParamException {
         if (bindingResult.getAllErrors().size() > 0) {
@@ -100,7 +100,7 @@ public class RsController {
         return ResponseEntity.created(null).build();
     }
 
-    @PatchMapping("rs/update/{id}")
+    @PatchMapping("rs/event/{id}")
     public ResponseEntity modifyRsEvent(@PathVariable int id,
                                         @RequestBody RsEvent rsEvent) {
         final RsEventEntity rsEventEntity = rsEventRepository.findById(id).get();
@@ -117,7 +117,7 @@ public class RsController {
         return ResponseEntity.badRequest().build();
     }
 
-    @DeleteMapping("rs/delete/{id}")
+    @DeleteMapping("rs/{id}")
     public ResponseEntity deleteRsEvent(@PathVariable int id) {
         rsEventRepository.deleteById(id);
         return ResponseEntity.ok().build();

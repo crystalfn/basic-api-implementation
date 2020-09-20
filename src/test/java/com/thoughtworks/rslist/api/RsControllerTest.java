@@ -87,7 +87,7 @@ class RsControllerTest {
         RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
         rsEventRepository.save(rsEventEntity);
 
-        mockMvc.perform(get("/rs/event?start=1&end=1"))
+        mockMvc.perform(get("/rs/events?start=1&end=1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
             .andExpect(jsonPath("$[0].eventName", is("事件1")))
@@ -103,7 +103,7 @@ class RsControllerTest {
         RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
         rsEventRepository.save(rsEventEntity);
 
-        mockMvc.perform(get("/rs/event?start=1&end=111"))
+        mockMvc.perform(get("/rs/events?start=1&end=111"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.errorMessage", is("invalid request param")));
     }
@@ -138,7 +138,7 @@ class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         final String jsonValue = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/addEvent")
+        mockMvc.perform(post("/rs/event")
             .content(jsonValue)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated());
@@ -159,7 +159,7 @@ class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         final String jsonValue = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/addEvent")
+        mockMvc.perform(post("/rs/event")
             .content(jsonValue)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
@@ -181,7 +181,7 @@ class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         final String jsonValue = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/addEvent")
+        mockMvc.perform(post("/rs/event")
             .content(jsonValue)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
@@ -204,7 +204,7 @@ class RsControllerTest {
         final String modifyEventJson = objectMapper.writeValueAsString(rsEvent);
 
         final Integer rsEventEntityId = rsEventEntity.getId();
-        mockMvc.perform(patch("/rs/update/{id}", rsEventEntityId)
+        mockMvc.perform(patch("/rs/event/{id}", rsEventEntityId)
             .content(modifyEventJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
@@ -230,7 +230,7 @@ class RsControllerTest {
         final String modifyEventJson = objectMapper.writeValueAsString(rsEvent);
 
         final Integer rsEventEntityId = rsEventEntity.getId();
-        mockMvc.perform(patch("/rs/update/{id}", rsEventEntityId)
+        mockMvc.perform(patch("/rs/event/{id}", rsEventEntityId)
             .content(modifyEventJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
@@ -251,7 +251,7 @@ class RsControllerTest {
         final String modifyEventJson = objectMapper.writeValueAsString(rsEvent);
 
         final Integer rsEventEntityId = rsEventEntity.getId();
-        mockMvc.perform(patch("/rs/update/{id}", rsEventEntityId)
+        mockMvc.perform(patch("/rs/event/{id}", rsEventEntityId)
             .content(modifyEventJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
@@ -276,7 +276,7 @@ class RsControllerTest {
         final String modifyEventJson = objectMapper.writeValueAsString(rsEvent);
 
         final Integer rsEventEntityId = rsEventEntity.getId();
-        mockMvc.perform(patch("/rs/update/{id}", rsEventEntityId)
+        mockMvc.perform(patch("/rs/event/{id}", rsEventEntityId)
             .content(modifyEventJson)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
@@ -297,7 +297,7 @@ class RsControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)));
 
-        mockMvc.perform(delete("/rs/delete/{id}", rsEventEntity.getId()))
+        mockMvc.perform(delete("/rs/{id}", rsEventEntity.getId()))
             .andExpect(status().isOk());
 
         mockMvc.perform(get("/rs/list"))

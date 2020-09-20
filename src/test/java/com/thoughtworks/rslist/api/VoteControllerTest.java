@@ -154,7 +154,7 @@ class VoteControllerTest {
             voteRepository.save(voteEntity);
         }
 
-        mockMvc.perform(get("/votes/")
+        mockMvc.perform(get("/votes")
             .param("userEntityId", String.valueOf(userEntity.getId()))
             .param("rsEventEntityId", String.valueOf(rsEventEntity.getId())))
             .andExpect(status().isOk())
@@ -198,7 +198,7 @@ class VoteControllerTest {
 
         String startTime = "2020-09-20 00:00:00";
         String endTime = "2020-12-20 23:59:59";
-        mockMvc.perform(get("/votes/byTime")
+        mockMvc.perform(get("/votes/time")
             .param("startTime", startTime)
             .param("endTime", endTime))
             .andExpect(status().isOk())
@@ -217,7 +217,7 @@ class VoteControllerTest {
 
         String startTime = "2020-12-20 23:59:59";
         String endTime = "2020-09-20 00:00:00";
-        mockMvc.perform(get("/votes/byTime")
+        mockMvc.perform(get("/votes/time")
             .param("startTime", startTime)
             .param("endTime", endTime))
             .andExpect(status().isBadRequest());

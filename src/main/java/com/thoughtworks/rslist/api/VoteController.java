@@ -65,7 +65,7 @@ public class VoteController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/votes/")
+    @GetMapping("/votes")
     public ResponseEntity<List<VoteDto>> getVotes(@RequestParam int userEntityId,
                                   @RequestParam int rsEventEntityId,
                                   @RequestParam(defaultValue = "1") int pageIndex,
@@ -77,7 +77,7 @@ public class VoteController {
             .collect(Collectors.toList()));
     }
 
-    @GetMapping("/votes/byTime")
+    @GetMapping("/votes/time")
     public ResponseEntity<List<VoteDto>> getVotesBetweenStartTimeAndEndTime(@RequestParam String startTime,
                                   @RequestParam String endTime) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
