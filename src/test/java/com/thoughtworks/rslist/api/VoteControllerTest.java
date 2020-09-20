@@ -19,8 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -88,6 +86,24 @@ class VoteControllerTest {
 
         final int remainVoteNumber = userRepository.findById(userEntity.getId()).get().getVoteNumber();
         assertEquals(userEntity.getVoteNumber() - voteNumber, remainVoteNumber);
+    }
+
+    @Test
+    void should_vote_fail_when_user_vote_number_less_than_vote_number() throws Exception {
+        int voteNumber = 11;
+        final VoteDto voteDto = VoteDto.builder()
+            .rsEventId(rsEventEntity.getId())
+            .userId(userEntity.getId())
+            .voteNumber(voteNumber)
+            .voteTime(null)
+            .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String voteJson = objectMapper.writeValueAsString(voteDto);
+
+        mockMvc.perform(post("/rs/vote/{rsEventId}", rsEventEntity.getId())
+            .content(voteJson)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
 
     }
 }
