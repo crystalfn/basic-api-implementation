@@ -19,6 +19,10 @@ public class RsEvent {
     public interface WithoutUser{};
     public interface WithUser extends WithoutUser{};
 
+    @Valid
+    @JsonView(RsEvent.WithoutUser.class)
+    private Integer id;
+
     @JsonView(RsEvent.WithoutUser.class)
     @NotEmpty
     private String eventName;
@@ -28,7 +32,7 @@ public class RsEvent {
     private String keywords;
 
     @NotNull
-    @JsonView(WithUser.class)
+    @JsonView(WithoutUser.class)
     private int userId;
 
     @Valid
@@ -36,14 +40,16 @@ public class RsEvent {
     private UserDto user;
 
     @Valid
-    @JsonView(WithUser.class)
+    @JsonView(WithoutUser.class)
     private int voteNumber;
 
     public static RsEvent convertRsEventEntityToRsEvent(RsEventEntity rsEventEntity) {
         return RsEvent.builder()
+            .id(rsEventEntity.getId())
             .eventName(rsEventEntity.getEventName())
             .keywords(rsEventEntity.getKeywords())
             .userId(rsEventEntity.getUserEntity().getId())
+            .voteNumber(rsEventEntity.getVoteNumber())
             .build();
     }
 }
