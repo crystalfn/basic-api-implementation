@@ -207,4 +207,19 @@ class VoteControllerTest {
             .andExpect(jsonPath("$[0].rsEventId", is(rsEventEntity.getId())))
             .andExpect(jsonPath("$[0].voteNumber", is(1)));
     }
+
+    @Test
+    void should_return_400_if_start_time_more_than_end_time() throws Exception {
+        for (int i = 1; i < 10; i++) {
+            final VoteEntity voteEntity = VoteUtils.setVote(userEntity, rsEventEntity, 1);
+            voteRepository.save(voteEntity);
+        }
+
+        String startTime = "2020-12-20 23:59:59";
+        String endTime = "2020-09-20 00:00:00";
+        mockMvc.perform(get("/votes/byTime")
+            .param("startTime", startTime)
+            .param("endTime", endTime))
+            .andExpect(status().isBadRequest());
+    }
 }

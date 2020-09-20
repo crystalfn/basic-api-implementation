@@ -66,28 +66,31 @@ public class VoteController {
     }
 
     @GetMapping("/votes/")
-    public List<VoteDto> getVotes(@RequestParam int userEntityId,
+    public ResponseEntity<List<VoteDto>> getVotes(@RequestParam int userEntityId,
                                   @RequestParam int rsEventEntityId,
                                   @RequestParam(defaultValue = "1") int pageIndex,
                                   @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(pageIndex - 1, size);
         final List<VoteEntity> votes = voteRepository.findAllByUserEntityIdAndRsEventEntityId(userEntityId, rsEventEntityId, pageable);
-        return votes
-            .stream()
+        return ResponseEntity.ok(votes.stream()
             .map(VoteDto::convertVoteEntityToVoteDto)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     @GetMapping("/votes/byTime")
-    public List<VoteDto> getVotesBetweenStartTimeAndEndTime(@RequestParam String startTime,
+    public ResponseEntity<List<VoteDto>> getVotesBetweenStartTimeAndEndTime(@RequestParam String startTime,
                                   @RequestParam String endTime) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime startTimeFormatter = LocalDateTime.parse(startTime, dateTimeFormatter);
         LocalDateTime entTimeFormatter = LocalDateTime.parse(endTime, dateTimeFormatter);
+
+        if (startTimeFormatter.isAfter(entTimeFormatter)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         final List<VoteEntity> votes = voteRepository.findAllByVoteTimeBetween(startTimeFormatter, entTimeFormatter);
-        return votes
-            .stream()
+        return ResponseEntity.ok(votes.stream()
             .map(VoteDto::convertVoteEntityToVoteDto)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 }
