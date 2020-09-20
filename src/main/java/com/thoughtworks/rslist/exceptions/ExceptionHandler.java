@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler({
-        InvalidIndexException.class
+        InvalidIndexException.class,
+        InvalidRequestParamException.class
     })
     public ResponseEntity<CommentError> handleException(Exception error) {
         CommentError commentError = new CommentError();

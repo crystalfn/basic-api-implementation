@@ -86,6 +86,7 @@ class RsControllerTest {
         userRepository.save(userEntity);
         RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
         rsEventRepository.save(rsEventEntity);
+
         mockMvc.perform(get("/rs/event?start=1&end=1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
@@ -93,6 +94,18 @@ class RsControllerTest {
             .andExpect(jsonPath("$[0].keywords", is("经济")))
             .andExpect(jsonPath("$[0].id", is(rsEventEntity.getId())))
             .andExpect(jsonPath("$[0].voteNumber", is(0)));
+    }
+
+    @Test
+    void should_return_400_when_start_or_end_out_of_range() throws Exception {
+        UserEntity userEntity = EntityUtil.createUserEntity();
+        userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = EntityUtil.createRsEventEntity(userEntity);
+        rsEventRepository.save(rsEventEntity);
+
+        mockMvc.perform(get("/rs/event?start=1&end=111"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errorMessage", is("invalid request param")));
     }
 
     @Test

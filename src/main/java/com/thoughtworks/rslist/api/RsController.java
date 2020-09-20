@@ -6,6 +6,7 @@ import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.exceptions.InvalidIndexException;
+import com.thoughtworks.rslist.exceptions.InvalidRequestParamException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +64,10 @@ public class RsController {
 
     @GetMapping("rs/event")
     public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
-                                                           @RequestParam(required = false) Integer end) {
+                                                           @RequestParam(required = false) Integer end) throws InvalidRequestParamException {
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
-        if (start == null || end == null) {
-            return ResponseEntity.ok(
-                rsEvents.stream()
-                    .map(RsEvent::convertRsEventEntityToRsEvent)
-                    .collect(Collectors.toList()));
+        if (start < 0 || start > rsEvents.size() || end < start || end > rsEvents.size()) {
+            throw new InvalidRequestParamException("invalid request param");
         }
         return ResponseEntity.ok(
             rsEvents.stream()
