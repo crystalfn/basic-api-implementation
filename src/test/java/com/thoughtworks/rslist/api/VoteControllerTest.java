@@ -163,4 +163,29 @@ class VoteControllerTest {
             .andExpect(jsonPath("$[0].rsEventId", is(rsEventEntity.getId())))
             .andExpect(jsonPath("$[0].voteNumber", is(1)));
     }
+
+    @Test
+    void should_get_votes_in_page_by_user_id_and_rs_event_id () throws Exception {
+        for (int i = 1; i < 10; i++) {
+            final VoteEntity voteEntity = VoteUtils.setVote(userEntity, rsEventEntity, 1);
+            voteRepository.save(voteEntity);
+        }
+
+        mockMvc.perform(get("/votes/")
+            .param("userEntityId", String.valueOf(userEntity.getId()))
+            .param("rsEventEntityId", String.valueOf(rsEventEntity.getId())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(5)))
+            .andExpect(jsonPath("$[0].userId", is(userEntity.getId())))
+            .andExpect(jsonPath("$[0].rsEventId", is(rsEventEntity.getId())))
+            .andExpect(jsonPath("$[0].voteNumber", is(1)));
+
+        mockMvc.perform(get("/votes/")
+            .param("userEntityId", String.valueOf(userEntity.getId()))
+            .param("rsEventEntityId", String.valueOf(rsEventEntity.getId()))
+            .param("pageIndex", "2")
+            .param("size", "5"))
+            .andExpect(jsonPath("$", hasSize(4)))
+            .andExpect(jsonPath("$[0].voteNumber", is(1)));
+    }
 }

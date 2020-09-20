@@ -8,6 +8,8 @@ import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
 import org.hibernate.annotations.Parameter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,12 +66,17 @@ public class VoteController {
     }
 
     @GetMapping("/votes/")
-    public List<VoteDto> getVotes(@RequestParam int userEntityId, @RequestParam int rsEventEntityId) {
-        final List<VoteEntity> votes = voteRepository.findAllByUserEntityIdAndRsEventEntityId(userEntityId, rsEventEntityId);
+    public List<VoteDto> getVotes(@RequestParam int userEntityId,
+                                  @RequestParam int rsEventEntityId,
+                                  @RequestParam(defaultValue = "1") int pageIndex,
+                                  @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, size);
+        final List<VoteEntity> votes = voteRepository.findAllByUserEntityIdAndRsEventEntityId(userEntityId, rsEventEntityId, pageable);
         return votes
             .stream()
             .map(VoteDto::convertVoteEntityToVoteDto)
             .collect(Collectors.toList());
-
     }
+
+
 }
