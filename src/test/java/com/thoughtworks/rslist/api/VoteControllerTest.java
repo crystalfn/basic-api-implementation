@@ -36,13 +36,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class VoteControllerTest {
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     RsEventRepository rsEventRepository;
-
     @Autowired
     VoteRepository voteRepository;
 

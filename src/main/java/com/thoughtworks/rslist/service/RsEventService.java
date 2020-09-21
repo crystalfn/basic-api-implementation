@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
-public class RsService {
+public class RsEventService {
     final RsEventRepository rsEventRepository;
     final UserRepository userRepository;
 
-    public RsService(RsEventRepository rsEventRepository, UserRepository userRepository) {
+    public RsEventService(RsEventRepository rsEventRepository, UserRepository userRepository) {
         this.rsEventRepository = rsEventRepository;
         this.userRepository = userRepository;
     }
